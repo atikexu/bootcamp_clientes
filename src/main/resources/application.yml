@@ -1,0 +1,7 @@
+#spring.data.mongodb.uri=mongodb://localhost:27017/clientes
+spring:
+  application:
+    name: clients
+  cloud:
+    config:
+      uri: http://localhost:8081
