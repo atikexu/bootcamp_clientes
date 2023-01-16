@@ -3,6 +3,7 @@ package com.bootcamp01.one.controller;
 import java.net.URI;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.logging.Logger;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -31,8 +32,11 @@ public class CompanyController {
 	@Autowired
 	private CompanyService companyService;
 	
+	private static final Logger logs_to_file = Logger.getLogger("debugger_file");
+	
 	@GetMapping
 	public Mono<ResponseEntity<Flux<Company>>> listPCompany(){
+		logs_to_file.info(String.format("Run process ", "/listPCompany"));
 		return Mono.just(
 					ResponseEntity.ok()
 					.contentType(MediaType.APPLICATION_JSON)
@@ -42,8 +46,8 @@ public class CompanyController {
 	
 	@PostMapping
 	public Mono<ResponseEntity<Map<String, Object>>> saveCompany(@Valid @RequestBody Mono<Company> company){
+		logs_to_file.info(String.format("Run process ", "/saveCompany"));
 		Map<String, Object> response = new HashMap<>();
-
 		return company.flatMap(p -> {
 			return companyService.save(p).map(c -> {
 				
@@ -70,6 +74,7 @@ public class CompanyController {
 	
 	@PutMapping("/update/{id}")
 	public Mono<ResponseEntity<Company>> updateCompany(@RequestBody Company company, @PathVariable String id){
+		logs_to_file.info(String.format("Run process ", "/updateCompany"));
 		return companyService.findById(id).flatMap(p -> {
 			p.setRuc(company.getRuc());
 			p.setEmail(company.getEmail());
@@ -86,6 +91,7 @@ public class CompanyController {
 	
 	@DeleteMapping("/delete/{id}")
 	public Mono<ResponseEntity<Void>> deleteCompany(@PathVariable String id){
+		logs_to_file.info(String.format("Run process ", "/deleteCompany"));
 		return companyService.findById(id).flatMap(p -> {
 			return companyService.delete(p).then(Mono.just(new ResponseEntity<Void>(HttpStatus.NO_CONTENT)));
 		}).defaultIfEmpty(new ResponseEntity<Void>(HttpStatus.NOT_FOUND));

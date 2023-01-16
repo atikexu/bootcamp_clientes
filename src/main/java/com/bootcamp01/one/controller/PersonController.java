@@ -4,6 +4,8 @@ import java.net.URI;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -31,8 +33,11 @@ public class PersonController {
 	@Autowired
 	private PersonService personService;
 	
+	private final Logger logger = LoggerFactory.getLogger(this.getClass());
+	
 	@GetMapping
 	public Mono<ResponseEntity<Flux<Person>>> listPerson(){
+		logger.info("Run process /listPerson");
 		return Mono.just(
 					ResponseEntity.ok()
 					.contentType(MediaType.APPLICATION_JSON)
@@ -42,6 +47,7 @@ public class PersonController {
 	
 	@PostMapping
 	public Mono<ResponseEntity<Map<String, Object>>> savePerson(@Valid @RequestBody Mono<Person> person){
+		logger.info("Run process /savePerson");
 		Map<String, Object> response = new HashMap<>();
 
 		return person.flatMap(p -> {
@@ -69,6 +75,7 @@ public class PersonController {
 	
 	@PutMapping("/update/{id}")
 	public Mono<ResponseEntity<Person>> updatePerson(@RequestBody Person person, @PathVariable String id){
+		logger.info("Run process /updatePerson");
 		return personService.findById(id).flatMap(p -> {
 			p.setDni(person.getDni());
 			p.setEmail(person.getEmail());
@@ -84,6 +91,7 @@ public class PersonController {
 	
 	@DeleteMapping("/delete/{id}")
 	public Mono<ResponseEntity<Void>> deletePerson(@PathVariable String id){
+		logger.info("Run process /deletePerson");
 		return personService.findById(id).flatMap(p -> {
 			return personService.delete(p).then(Mono.just(new ResponseEntity<Void>(HttpStatus.NO_CONTENT)));
 		}).defaultIfEmpty(new ResponseEntity<Void>(HttpStatus.NOT_FOUND));
